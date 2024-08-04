@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, simpledialog
+from pyker.models import classify_hand
 
 class PokerHelperGUI:
     def __init__(self, root):

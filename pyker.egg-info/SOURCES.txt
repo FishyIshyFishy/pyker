@@ -1,0 +1,6 @@
+README.md
+setup.py
+pyker.egg-info/PKG-INFO
+pyker.egg-info/SOURCES.txt
+pyker.egg-info/dependency_links.txt
+pyker.egg-info/top_level.txt
