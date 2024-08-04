@@ -19,9 +19,13 @@ HAND_RANKINGS = {
 }
 
 def card_value(card):
+    if card[0] not in VALUES:
+        raise ValueError(f"Invalid card rank: {card[0]}")
     return VALUES[card[0]]
 
 def card_suit(card):
+    if card[1] not in SUITS:
+        raise ValueError(f"Invalid card suit: {card[1]}")
     return card[1]
 
 def is_straight(cards):
@@ -80,10 +84,13 @@ def classify_hand(hand, community_cards):
     return best_score, best_hand_rank, best_hand
 
 if __name__ == "__main__":
-    hand = ["QH", "JC"]
-    community_cards = ["JD", "JH", "JS", "2D", "3C"]
+    hand = ["9C", "8C"]
+    community_cards = ["QS", "3S", "4D", "6H", "9D"]
 
-    score, hand_type, best_hand = classify_hand(hand, community_cards)
-    print(f"Best hand: {best_hand}")
-    print(f"Hand type: {hand_type}")
-    print(f"Score: {score}")
+    try:
+        score, hand_type, best_hand = classify_hand(hand, community_cards)
+        print(f"Best hand: {best_hand}")
+        print(f"Hand type: {hand_type}")
+        print(f"Score: {score}")
+    except ValueError as e:
+        print(e)
