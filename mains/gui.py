@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, simpledialog
+from models.assign_value import classify_hand  # Import the classify_hand function from hand_evaluation.py
 
 class PokerHelperGUI:
     def __init__(self, root):
@@ -12,7 +13,7 @@ class PokerHelperGUI:
         self.style.theme_use('clam')
         self.style.configure('TFrame', background='#2c3e50')
         self.style.configure('TLabel', background='#2c3e50', foreground='#ecf0f1', font=('Helvetica', 12))
-        self.style.configure('TButton', background='#2c3e50', foreground='#ecf0f1', font=('Helvetica', 12, 'bold'), padding=10)
+        self.style.configure('TButton', background='#34495e', foreground='#ecf0f1', font=('Helvetica', 12, 'bold'), padding=10)
         self.style.map('TButton', background=[('active', '#34495e')], foreground=[('active', '#ecf0f1')])
         self.style.configure('TEntry', fieldbackground='#34495e', foreground='#ecf0f1', font=('Helvetica', 12))
         self.style.configure('TLabelframe', background='#2c3e50', foreground='#ecf0f1', font=('Helvetica', 12, 'bold'), padding=10)
@@ -27,6 +28,7 @@ class PokerHelperGUI:
             self.create_widgets()
 
     def create_widgets(self):
+        # Frame for round number and community cards
         round_frame = ttk.Frame(self.root, padding="10")
         round_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
@@ -38,6 +40,7 @@ class PokerHelperGUI:
         self.community_cards_entry = ttk.Entry(round_frame)
         self.community_cards_entry.grid(row=1, column=1, padx=5, pady=5)
 
+        # Frame for player's own information
         self_info_frame = ttk.LabelFrame(self.root, text="Your Info", padding="10")
         self_info_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
@@ -51,6 +54,14 @@ class PokerHelperGUI:
 
         ttk.Button(self_info_frame, text="Record Bet", command=self.record_own_bet).grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
+        # Button to evaluate hand
+        ttk.Button(self_info_frame, text="Evaluate Hand", command=self.evaluate_hand).grid(row=3, column=0, columnspan=2, padx=5, pady=5)
+
+        # Label to display hand evaluation result
+        self.hand_eval_label = ttk.Label(self_info_frame, text="", background='#2c3e50', foreground='#ecf0f1', font=('Helvetica', 12, 'bold'))
+        self.hand_eval_label.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
+
+        # Frame for other players
         self.table_frame = ttk.Frame(self.root, padding="10")
         self.table_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
 
@@ -84,6 +95,16 @@ class PokerHelperGUI:
         hand = self.hand_entry.get()
         community_cards = self.community_cards_entry.get()
         self.results.insert(tk.END, f"Your hand: {hand}, Your bet: {bet_amount} in round {round_num}, Community cards: {community_cards}.\n")
+
+    def evaluate_hand(self):
+        hand = self.hand_entry.get().split()
+        community_cards = self.community_cards_entry.get().split()
+
+        try:
+            score, hand_type, best_hand = classify_hand(hand, community_cards)
+            self.hand_eval_label.config(text=f"Best hand: {best_hand}, Hand type: {hand_type}, Score: {score}")
+        except ValueError as e:
+            self.hand_eval_label.config(text=str(e))
 
     def record_bet(self, idx):
         p_info = self.players[idx]
